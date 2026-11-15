@@ -83,7 +83,7 @@ run() {
 	qemu-system-x86_64 \
 	  $kvmargs \
 	  -smp 2 \
-	  -m 2G \
+	  -m 4G \
 	  -vga std -display gtk \
 	  -drive file="./build/image.bin",if=ide,format=raw \
 	  -nic user
