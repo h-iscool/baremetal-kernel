@@ -6,6 +6,8 @@
 #include "../drivers/string.h"
 #include "syscall_wrappers.h"
 
+#include "../drivers/heap.h" //new free and malloc fns (maybe will just extern them latre)
+
 #include <stdbool.h>
 
 #define PRINT_IDT 309003164 //adler32 hash of print-idt
@@ -136,9 +138,10 @@ void console() {
 			command_len = 0; //reset the string
 			check_command(command);
 			break;
-		case KEY_DELETE:
+		case /*KEY_DELETE*/'\b':
 			if (command_len > 0){
 				command[--command_len] = '\0';
+				printChar(pressed);
 			}
 			break;
 		default:

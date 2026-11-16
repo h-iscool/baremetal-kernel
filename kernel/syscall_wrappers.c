@@ -2,13 +2,15 @@
 
 #include <stddef.h>
 
-extern void *syscall_malloc(size_t size);
+// ty @burning_plant for making the original malloc placeholder
 
-void *malloc(size_t size) {
-	//return (void *)0x90000000; //later change to an asm inline that raises an interrupt
-	return syscall_malloc(size);
-}
+// extern void *syscall_malloc(size_t size);
 
-void free(void * ptr){
-	return;
-}
+// void *malloc(size_t size) {
+// 	//return (void *)0x90000000; //later change to an asm inline that raises an interrupt
+// 	return syscall_malloc(size);
+// }
+
+// void free(void * ptr){
+// 	return;
+// }
