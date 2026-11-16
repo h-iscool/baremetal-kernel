@@ -6,6 +6,19 @@
 
 // void timer_tick_call();
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+
+
+
 void sleep(uint32_t ms);
+
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

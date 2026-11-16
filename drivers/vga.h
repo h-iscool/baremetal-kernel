@@ -22,6 +22,9 @@
 #define VGA_COLOR_LIGHT_MAGENTA 0xd
 #define VGA_COLOR_YELLOW 0xe
 #define VGA_COLOR_WHITE 0xf
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 void vga_clearScreen(char color);
 void vga_printChar(char toPrint, char color);
@@ -29,4 +32,8 @@ void vga_printString(const char* string, char color);
 char vga_pack_colors(char characterColor, char backgroundColor);
 void vga_scroll_up(int lines,int setX);
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif

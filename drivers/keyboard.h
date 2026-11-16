@@ -7,6 +7,18 @@
 #define KEY_DELETE 0xE
 #define KEY_BACKSPACE '\b'
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+
+
 char getPressedASCII();
+
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

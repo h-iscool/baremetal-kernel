@@ -9,6 +9,10 @@
 #error "UNSIGNED INT IS NOT 32 BITS"
 #endif
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 void *memset(void * ptr, size_t val, size_t size);
 void *memset_word(void * ptr, uint16_t val, size_t size);
 void *memcpy(void * dest, const void * src, size_t size);
@@ -18,6 +22,11 @@ char * itoa (int value, char * strbuff, size_t base);
 int atoi (char *string, size_t len,size_t base);
 void *memcpy32(void * dest, const void * src, size_t size);
 void *memcpy32_fast(void *dest, const void *src, size_t count);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif
