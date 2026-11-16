@@ -28,7 +28,8 @@ kernel_init:
 
 mov esp, stack_top
 
-
+extern heap_init
+call heap_init
 
 ;;prep for C++:
 
