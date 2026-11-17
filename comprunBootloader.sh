@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s globstar nullglob
 
-nodependencies="-ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin" 
+nodependencies="-I./ -ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin" 
 cppdependencies="$nodependencies -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics"
 
 compile(){
@@ -16,11 +16,11 @@ compile(){
 
 	#elf32 allows to be linked together
 	nasm -f elf32 -o "./build/stage2.o" "stage2.asm"
-	nasm -f elf32 -o "./build/kernel.o" "./kernel/kernel.s"
-	nasm -f elf32 -o "./build/syscalls.o" "./kernel/syscalls.s"
-	nasm -f elf32 -o "./build/idtasm.o" "./kernel/idt/idt.s"
-	nasm -f elf32 -o "./build/israsm.o" "./kernel/idt/isr/isrs.asm"
-	nasm -f elf32 -o "./build/stupidFixasm.o" "./drivers/biosIntFromC.asm"
+	nasm -f elf32 -o "./build/kernel.o" "./system/kernel/kernel.s"
+	nasm -f elf32 -o "./build/syscalls.o" "./system/syscalls.s"
+	nasm -f elf32 -o "./build/idtasm.o" "./system/kernel/idt/idt.s"
+	nasm -f elf32 -o "./build/israsm.o" "./system/kernel/idt/isr/isrs.asm"
+	nasm -f elf32 -o "./build/stupidFixasm.o" "./system/biosIntFromC.asm"
 	# gcc -m32 -c ./kernel/kernel_init.c -o ./build/kernel_init.o $nodependencies -O2 -nostdlib
 	# gcc -m32 -c ./kernel/console.c -o ./build/console.o $nodependencies -O2 -nostdlib
 	# gcc -m32 -c ./drivers/vga.c -o ./build/vga.o $nodependencies -O2 -nostdlib
@@ -33,21 +33,21 @@ compile(){
 	for file in ./feature_testing_and_debug/**/*.asm ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
 		if [ -f "$file" ]; then
 			name=$(basename "$file" .asm) # cool linux command htat gives the name
-			nasm -f elf32 -o "./build/$name.o" $file
+			nasm -f elf32 -o "./build/asm$name.o" $file
 		fi
 	done
 
-	for file in ./kernel/**/*.c ./drivers/**/*.c ./feature_testing_and_debug/**/*.c ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
+	for file in ./system/**/*.c ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
 		if [ -f "$file" ]; then
 			name=$(basename "$file" .c) # cool linux command htat gives the name
-			gcc -m32 -c "$file" -o ./build/"$name".o $nodependencies -O2 -nostdlib
+			gcc -m32 -c "$file" -o ./build/"c$name".o $nodependencies -O2 -nostdlib
 		fi
 	done
 
-	for file in ./kernel/**/*.cpp ./drivers/**/*.cpp ./feature_testing_and_debug/**/*.cpp ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
+	for file in ./system/**/*.cpp ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
 		if [ -f "$file" ]; then
 			name=$(basename "$file" .cpp) # cool linux command htat gives the name
-			g++ -m32 -c "$file" -o ./build/"$name".o $cppdependencies -O2 -nostdlib
+			g++ -m32 -c "$file" -o ./build/"cpp$name".o $cppdependencies -O2 -nostdlib
 		fi
 	done
 

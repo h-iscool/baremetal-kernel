@@ -1,4 +1,5 @@
-#include "../drivers/screen.h"
+#include "system/drivers/console_screen.h"
+#include "system/common/machine.h"
 
 void LOAD_TESTING(){ //ikik its c not asm but C is so much more readable. also we should try to keep this file kinda clean... maybe
 

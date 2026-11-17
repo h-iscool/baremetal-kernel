@@ -1,4 +1,4 @@
-#include "./idt.h"
+#include "system/kernel/idt/idt.h"
 
 #include <stdint.h>
 

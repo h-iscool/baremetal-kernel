@@ -1,12 +1,12 @@
-#include "console.h"
+#include "system/kernel/console.h"
 
-#include "../drivers/screen.h"
-#include "../drivers/keyboard.h"
-#include "../drivers/crypto.h"
-#include "../drivers/string.h"
-#include "syscall_wrappers.h"
+#include "system/drivers/console_screen.h"
+#include "system/drivers/keyboard.h"
+#include "system/common/crypto.h"
+#include "system/common/string.h"
+#include "system/syscall_wrappers.h"
 
-#include "../drivers/heap.h" //new free and malloc fns (maybe will just extern them latre)
+#include "system/common/heap.h" //new free and malloc fns (maybe will just extern them latre)
 
 #include <stdbool.h>
 

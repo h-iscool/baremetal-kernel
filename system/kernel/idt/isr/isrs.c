@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "../../../drivers/screen.h"
-#include "../../../drivers/string.h"
+#include "system/drivers/console_screen.h"
+#include "system/common/string.h"
 
 typedef struct 
 {

@@ -1,6 +1,6 @@
-#include "vga.h"
-#include "vbeconsole.h"
-#include "screen.h"
+#include "system/drivers/vga.h"
+#include "system/drivers/vbeconsole.h"
+#include "system/drivers/console_screen.h"
 
 
 static int videoDriver = 0;

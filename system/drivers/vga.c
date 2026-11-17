@@ -4,8 +4,8 @@
 //     screen[1+(offset*2)] = 0x0F;
 // }
 
-#include "vga.h"
-#include "./string.h"
+#include "system/drivers/vga.h"
+#include "system/common/string.h"
 
 
 static int vga_cursor_x = 0;

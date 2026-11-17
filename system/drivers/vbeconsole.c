@@ -1,9 +1,9 @@
-#include "vbeconsole.h"
-#include "./vbe.h"
+#include "system/drivers/vbeconsole.h"
+#include "system/drivers/vbe.h"
 #include <stdint.h>
-#include "./string.h"
-#include"./fonts/psf2struct.h"
-#include "./fonts/font1.h"
+#include "system/common/string.h"
+#include"system/drivers/fonts/psf2struct.h"
+#include "system/drivers/fonts/font1.h"
 
 static int vbe_supported = 0;
 

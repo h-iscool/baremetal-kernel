@@ -1,5 +1,5 @@
-#include "keyboard.h"
-#include "serialports.h"
+#include "system/drivers/keyboard.h"
+#include "system/common/serialports.h"
 #include <stdbool.h>
 
 // 0x64 is the status register, the lowest bit is 0 if no data is ready to be read and is 1 if data is ready to be read

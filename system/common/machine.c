@@ -1,5 +1,5 @@
-#include "./machine.h"
-#include "./serialports.h"
+#include "system/common/machine.h"
+#include "system/common/serialports.h"
 #include <stdint.h>
 
 void time_init(){
