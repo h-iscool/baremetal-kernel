@@ -1,4 +1,4 @@
-#include "system/drivers/vbe.h"
+#include "system/drivers/vbe_common.h"
 #include <stdint.h>
 
 // typedef struct{

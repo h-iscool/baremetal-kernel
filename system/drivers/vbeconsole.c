@@ -1,5 +1,5 @@
 #include "system/drivers/vbeconsole.h"
-#include "system/drivers/vbe.h"
+#include "system/drivers/vbe_common.h"
 #include <stdint.h>
 #include "system/common/string.h"
 #include"system/drivers/fonts/psf2struct.h"
