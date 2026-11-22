@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s globstar nullglob
 
-nodependencies="-I./ -ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin" 
+nodependencies="-I./ -ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin -mno-mmx -mno-sse -mno-sse2" 
 cppdependencies="$nodependencies -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics"
 
 compile(){
