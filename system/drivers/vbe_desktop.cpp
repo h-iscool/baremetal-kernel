@@ -90,36 +90,31 @@ void drawFrame(){
 
 
 
+#include "system/drivers/ps2_mouse.h"
+
+
 void desktop_test_fn(){
 
+    mouse_init();
+
+    int mouseX = 0;
+    int mouseY =0;
     if (!loadedSuccessfully || screen == nullptr) return;
 
     DesktopScreen compositor(screen);
 
-
     screenObject* window1 = new screenObject(100, 100, 400, 300);
     window1->surface->fillRect(0, 0, 400, 300, 0xFF3B82F6);
-
-
     screenObject* window2 = new screenObject(250, 200, 350, 250);
     window2->surface->fillRect(0, 0, 350, 250, 0xaFFC4899);
     window2->setOpacity(160);
-
-
-
     screenObject* window3 = new screenObject(0,0,500,600);
     window3->surface->fillRect(50,50,300,500,0x77ff00ff,12);
     window3->setOpacity(100);
-
-
-
     #include "system/common/display/assets/cursor.h"
 
     screenObject* cursorlayer = new screenObject(0,0,cursor_gimp_image.width,cursor_gimp_image.height);
     cursorlayer->surface->drawBitmap(cursor_gimp_image.pixel_data,0,0,cursor_gimp_image.width,cursor_gimp_image.height);
-
-    cursorlayer->x+=50;
-
 
     compositor.addObject(window1);
     compositor.addObject(window2);
@@ -127,10 +122,38 @@ void desktop_test_fn(){
 
     compositor.addObject(cursorlayer);
 
+    while (1){
+
+
+    
+
+    mouse_packet_t packet = mouse_getPacket();
+    
+    int newx = mouseX + packet.deltaX;
+    int newy = mouseY + packet.deltaY;
+    
+    int maxX = (int)width  - 1;
+    int maxY = (int)height - 1;
+    
+    mouseX = newx < 0 ? 0 : (newx > maxX ? maxX : newx);
+    mouseY = newy < 0 ? 0 : (newy > maxY ? maxY : newy);
+
+    cursorlayer->setPosition(mouseX,mouseY);
+
+
+    
+
     compositor.render();
 
     drawFrame();
+    }
+    
 }
+
+
+
+
+
 
 void desktop_init(){
     if (check_vbe_support()){

@@ -95,3 +95,11 @@ pusha
 call keyboard_int_handler
 popa
 iretd
+
+extern mouse_int_handler
+global _isr44
+_isr44:
+pusha
+call mouse_int_handler
+popa
+iretd

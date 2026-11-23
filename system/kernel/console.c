@@ -1,7 +1,7 @@
 #include "system/kernel/console.h"
 
 #include "system/drivers/console_screen.h"
-#include "system/drivers/keyboard.h"
+#include "system/drivers/ps2_keyboard.h"
 #include "system/common/crypto.h"
 #include "system/common/string.h"
 #include "system/syscall_wrappers.h"

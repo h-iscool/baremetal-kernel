@@ -58,9 +58,15 @@ void load_idt_handlers(){
     set_idt_gate(32,(uint32_t)_isr32,0x08, 0x8e); // BC of remap, idt 32-47 are also taken up. as of rn, only 32 has functionality
     //https://en.wikipedia.org/wiki/Interrupt_request
     // all 32-47 NEED to be mapped at some point to avoid crashes
+
     extern void _isr33();
     set_idt_gate(33,(uint32_t)_isr33,0x08, 0x8e);
+    //keyboard
 
+
+
+    extern void _isr44();
+    set_idt_gate(44,(uint32_t)_isr44,0x08, 0x8e);
     
 }
 

@@ -1,4 +1,4 @@
-#include "system/drivers/keyboard.h"
+#include "system/drivers/ps2_keyboard.h"
 #include "system/common/serialports.h"
 #include <stdbool.h>
 
@@ -79,6 +79,12 @@ int bufferHead = 0;
 int bufferTail = 0;
 
 void keyboard_int_handler(){
+    unsigned char status = inb(0x64);
+    if (!((status & 0x01) && !(status & 0x20))){
+        outb(0x20,0x20);
+        return;
+    }
+
     unsigned char scancode = inb(0x60); //get the scan code
 
     bool isRelease = ((scancode & 0x80) != 0);
