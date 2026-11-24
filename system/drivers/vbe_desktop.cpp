@@ -8,19 +8,18 @@
 #include "system/common/display/canvas.hpp"
 #include "system/common/display/screen_obj.hpp"
 
+#include "system/drivers/ps2_mouse.h"
+
 #include <stdint.h>
 #include <stddef.h>
 
 static uint32_t * lfb_ptr = 0;
 static uint32_t width = 0;
 static uint32_t height = 0;
-static uint32_t pitch = 0;
 static uint32_t pitchpx = 0;
-static size_t fb_bytes = 0;
-static uint32_t * fbptr = 0;
-static uint8_t loadedSuccessfully = 0;
-static Canvas* screen = nullptr;
-
+static uint32_t * backbuffer = 0;
+static Canvas* backCanvas = nullptr;
+static Canvas* frontCanvas = nullptr;
 
 static uint8_t aspectRatioIdx = 0; // 0 = 21:9 1 = 16:9 2 = 4:3 all else is unsupported
 typedef struct
@@ -56,11 +55,8 @@ int screenResolutionSetup(){
             if (vbe_try_set_resolution(resolutions[i].width,resolutions[i].height)){
                 lfb_ptr = vbe_get_fb_ptr();
                 width = vbe_get_width();
-                pitch = vbe_get_pitch();
-                pitchpx = pitch/4;
+                pitchpx = vbe_get_pitch()/4;
                 height = vbe_get_height();
-                fb_bytes = width*height*sizeof(uint32_t);
-                fbptr = (uint32_t*)calloc(1,fb_bytes);
                 return 1;
             }
         }
@@ -83,87 +79,35 @@ int screenResolutionSetup(){
 
 
 
-
-void drawFrame(){
-    memcpy32_fast(lfb_ptr,fbptr,fb_bytes/4);
+Canvas* desktop_back_canvas(){
+    return backCanvas;
 }
 
-
-
-#include "system/drivers/ps2_mouse.h"
-
-
-void desktop_test_fn(){
-
-    mouse_init();
-
-    int mouseX = 0;
-    int mouseY =0;
-    if (!loadedSuccessfully || screen == nullptr) return;
-
-    DesktopScreen compositor(screen);
-
-    screenObject* window1 = new screenObject(100, 100, 400, 300);
-    window1->surface->fillRect(0, 0, 400, 300, 0xFF3B82F6);
-    screenObject* window2 = new screenObject(250, 200, 350, 250);
-    window2->surface->fillRect(0, 0, 350, 250, 0xaFFC4899);
-    window2->setOpacity(160);
-    screenObject* window3 = new screenObject(0,0,500,600);
-    window3->surface->fillRect(50,50,300,500,0x77ff00ff,12);
-    window3->setOpacity(100);
-    #include "system/common/display/assets/cursor.h"
-
-    screenObject* cursorlayer = new screenObject(0,0,cursor_gimp_image.width,cursor_gimp_image.height);
-    cursorlayer->surface->drawBitmap(cursor_gimp_image.pixel_data,0,0,cursor_gimp_image.width,cursor_gimp_image.height);
-
-    compositor.addObject(window1);
-    compositor.addObject(window2);
-    compositor.addObject(window3);
-
-    compositor.addObject(cursorlayer);
-
-    while (1){
-
-
-    
-
-    mouse_packet_t packet = mouse_getPacket();
-    
-    int newx = mouseX + packet.deltaX;
-    int newy = mouseY + packet.deltaY;
-    
-    int maxX = (int)width  - 1;
-    int maxY = (int)height - 1;
-    
-    mouseX = newx < 0 ? 0 : (newx > maxX ? maxX : newx);
-    mouseY = newy < 0 ? 0 : (newy > maxY ? maxY : newy);
-
-    cursorlayer->setPosition(mouseX,mouseY);
-
-
-    
-
-    compositor.render();
-
-    drawFrame();
-    }
-    
+Canvas* desktop_front_canvas(){
+    return frontCanvas;
 }
-
-
 
 
 
 
 void desktop_init(){
-    if (check_vbe_support()){
-        vbe_scan_resolutions();
-        if (screenResolutionSetup()){
-
-            screen = new Canvas(fbptr, width, height, pitchpx);
-
-            loadedSuccessfully=1;
-            
-        }
+    if (!check_vbe_support()){
+        return;
     }
+    vbe_scan_resolutions();
+    if (!screenResolutionSetup()){
+        return;
+    }
+
+    backbuffer = (uint32_t*)calloc(1,(size_t)width*height*sizeof(uint32_t));
+    if (!backbuffer){
+        return;
+    }
+
+    backCanvas = new Canvas(backbuffer,(int)width, (int)height,(int)width); //no pitch cause this is the buffer that getrs ported tio the actual screen mem
+    frontCanvas = new Canvas(lfb_ptr, (int)width,(int)height,(int)pitchpx); // pitch was useless cause i always mult to get pitch px anywayts
+
+    mouse_init();
+    
+
 }

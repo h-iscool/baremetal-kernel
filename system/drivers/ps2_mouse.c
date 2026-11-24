@@ -73,7 +73,7 @@ void mouse_init(){
     status |=2; // i just found out u can do that also ts enables the irq12 bit
     status &=~0x20; //enable mouse clock
     status &=~0x10;
-    
+
     mouse_waitUntilRW(1);
     outb(0x64,0x60); // write status byte;
     mouse_waitUntilRW(1);
@@ -106,6 +106,9 @@ void mouse_init(){
     mouse_write(0xf2); //obtain device id
     mouse_waitUntilRW(0);
     mouseID = inb(0x60);
+
+    mouse_write(0xf3);
+    mouse_write(200); // reset sample rate to 200hz
 
     packetsize = (mouseID==3||mouseID==4)?4:3;
     mouseCycle=0;

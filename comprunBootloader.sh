@@ -66,10 +66,10 @@ compile(){
 	# 	exit
 	# fi
 
-	cat ./build/stage1.bin ./build/linked.bin > ./build/image.bin
+	cat ./build/stage1.bin ./build/linked.bin > ./build/image.img
 
 	# padding:
-	truncate -s 64k ./build/image.bin
+	truncate -s 64k ./build/image.img
 
 }
 
@@ -85,7 +85,7 @@ run() {
 	  -smp 2 \
 	  -m 4G \
 	  -vga std -display gtk \
-	  -drive file="./build/image.bin",if=ide,format=raw \
+	  -drive file="./build/image.img",if=ide,format=raw \
 	  -nic user
 
 }

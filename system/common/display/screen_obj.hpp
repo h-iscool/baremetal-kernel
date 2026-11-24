@@ -2,6 +2,7 @@
 #define SCREEN_OBJ_HPP
 
 #include "system/common/display/canvas.hpp"
+#include "system/common/display/rect.hpp"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -25,7 +26,9 @@ public:
     int zIdx = 0;
     bool visible = true;
 
-    
+    bool stateDirty = true;
+    rect dirtyContent{0,0,0,0};
+    rect lastRect{0,0,0,0};
 
     screenObject(int width, int height);
     screenObject(int x, int y, int width, int height);
@@ -37,6 +40,10 @@ public:
     void setOpacity(uint8_t alpha);
     void changeOpacity(uint8_t alpha);
     bool contains(int px,int py);
+    void setVisible(bool v);
+
+    void invalidate();
+    void invalidate(const rect&  localchange);
 
 };
 

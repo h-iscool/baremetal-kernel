@@ -2,6 +2,7 @@
 #define CANVAS_HPP
 
 #include <stdint.h>
+#include "system/common/display/rect.hpp"
 
 #ifdef __cplusplus
 
@@ -25,6 +26,12 @@ public:
     void fillCircle(int centerX, int centerY, int r, uint32_t color);
     void fillRect(int x, int y, int w, int h, uint32_t color, int r);
     void drawBitmap(const unsigned char *  ARGBpixelBuffer , int destX, int destY, int w, int h);
+
+    void fill(const rect& area, uint32_t color);
+    
+    void copyFrom(const Canvas& src, const rect& area);
+
+    void blit(const Canvas& src, int destX, int destY, uint8_t opacity, const rect& clip);
 
 };
 
