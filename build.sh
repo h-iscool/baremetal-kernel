@@ -71,7 +71,7 @@ for tool in nasm "${CC[0]}" "${LD[0]}" "$QEMU"; do
   }
 done
 
-compileandrun() {
+compile() {
   rm -rf ./build
   mkdir -p ./build
 
@@ -107,13 +107,15 @@ compileandrun() {
 		fi
 	done
   
-  "${LD[@]}" -T linker.ld \
+  "${LD[@]}" -Map ./build/linked.map -T linker.ld \
     ./build/*.o \
     -o ./build/linked.bin --oformat binary || { echo "Linker didn't link. Maybe something didn't compile?"; exit 1; }
 
   cat ./build/stage1.bin ./build/linked.bin > ./build/image.bin
   truncate -s 64k ./build/image.bin
+}
 
+run(){
   "$QEMU" \
     "${QEMU_ARGS[@]}" \
     -smp 2 \
@@ -123,5 +125,8 @@ compileandrun() {
     -nic user
 }
 
-compileandrun
+if [[ "$*" != *-s* ]] || [[ "$*" != *-skip* ]] ; then
+	compile
+fi
 
+run 
