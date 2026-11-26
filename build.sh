@@ -35,6 +35,7 @@ CPPFLAGS=(
 case "$OS" in
   Linux)
     CC=(gcc -m32)
+    CPPC=(g++ -m32)
     LD=(ld -m elf_i386)
 
     if [[ -w /dev/kvm ]]; then
@@ -108,10 +109,10 @@ compileandrun() {
   
   "${LD[@]}" -T linker.ld \
     ./build/*.o \
-    -o ./build/linked.bin --oformat binary
+    -o ./build/linked.bin --oformat binary || { echo "Linker didn't link. Maybe something didn't compile?"; exit 1; }
 
   cat ./build/stage1.bin ./build/linked.bin > ./build/image.bin
-  truncate -s 10240 ./build/image.bin
+  truncate -s 64k ./build/image.bin
 
   "$QEMU" \
     "${QEMU_ARGS[@]}" \
