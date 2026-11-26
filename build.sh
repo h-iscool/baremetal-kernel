@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
+
+
+shopt -s globstar
+shopt -s nullglob
 set -euo pipefail
+
 
 OS="$(uname -s)"
 ARCH="$(uname -m)"
 QEMU=qemu-system-i386
 
 CFLAGS=(
+  -I./
   -ffreestanding
   -fno-pie
   -fno-pic
   -fno-stack-protector
   -fno-builtin
+  -mno-mmx
+  -mno-sse
+  -mno-sse2
   -O2
   -nostdlib
 )
@@ -38,6 +47,7 @@ case "$OS" in
   Darwin)
     # Homebrew's i686-elf toolchain emits ELF, unlike Apple's clang.
     CC=(i686-elf-gcc)
+    CPPC=(i686-elf-g++)
     LD=(i686-elf-ld -m elf_i386)
 
     if [[ "$ARCH" == "x86_64" ]]; then
@@ -64,23 +74,35 @@ compileandrun() {
   rm -rf ./build
   mkdir -p ./build
 
-  nasm -f bin   -o ./build/stage1.bin stage1.asm
-  nasm -f elf32 -o ./build/stage2.o stage2.asm
-  nasm -f elf32 -o ./build/kernel.o ./kernel/kernel.s
-  nasm -f elf32 -o ./build/syscalls.o ./kernel/syscalls.s
+	nasm -f bin -o "./build/stage1.bin" "stage1.asm"
+
+	#elf32 allows to be linked together
+	nasm -f elf32 -o "./build/stage2.o" "stage2.asm"
+	nasm -f elf32 -o "./build/kernel.o" "./system/kernel/kernel.s"
+	nasm -f elf32 -o "./build/syscalls.o" "./system/syscalls.s"
+	nasm -f elf32 -o "./build/idtasm.o" "./system/kernel/idt/idt.s"
+	nasm -f elf32 -o "./build/israsm.o" "./system/kernel/idt/isr/isrs.asm"
+	nasm -f elf32 -o "./build/stupidFixasm.o" "./system/biosIntFromC.asm"
 
 
-	for file in ./kernel/*.c ./drivers/*.c ./feature_testing_and_debug/*.c ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
+	for file in $(find ./feature_testing_and_debug | grep -E "\.asm$") ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
+		if [ -f "$file" ]; then
+			name=$(basename "$file" .asm) # cool linux command htat gives the name
+			nasm -f elf32 -o "./build/asm$name.o" $file
+		fi
+	done	
+
+	for file in $(find ./system | grep -E "\.c$") ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
 		if [ -f "$file" ]; then
 			name=$(basename "$file" .c) # cool linux command htat gives the name
 			"${CC[@]}" -c "$file" -o ./build/"$name".o "${CFLAGS[@]}"
 		fi
 	done
 
-  for file in ./kernel/*.cpp ./drivers/*.cpp ./feature_testing_and_debug/*.cpp ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
+	for file in $(find ./system | grep -E "\.cpp$") ; do #TO ADD A DIR TO COMPULOE STUFF, ADD HERE AND IN THE CPP ONE
 		if [ -f "$file" ]; then
-			name=$(basename "$file" .c) # cool linux command htat gives the name
-			"${CC[@]}" -c "$file" -o ./build/"$name".o "${CPPFLAGS[@]}"
+			name=$(basename "$file" .cpp) # cool linux command htat gives the name
+			"${CPPC[@]}" -c "$file" -o ./build/"$name".o "${CPPFLAGS[@]}"
 		fi
 	done
   
